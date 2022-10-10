@@ -114,3 +114,6 @@ void terminal_tty::print_term()
     _stdout.puts_color("[strap term]", system::core::io::color::green, _stdout.get_bg());
     _stdout.putc(' ');
 }
+
+void terminal_tty::enter() {}
+void terminal_tty::exit() {}

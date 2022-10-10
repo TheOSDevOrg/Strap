@@ -23,5 +23,8 @@ namespace system::core::io::ttys
         void handle_input(std::key_t &k) override;
     public:
         bool register_sequence(std::array<std::key_t> &seq, std::combination_handler handler) override;
+    public:
+        void enter() override;
+        void exit() override;
     };
 }

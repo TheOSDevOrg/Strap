@@ -3,7 +3,6 @@
 #include <hal/interrupts/gdt.h>
 #include <hal/interrupts/idt.h>
 #include <core/io/layouts/english.hpp>
-#include <hal/drivers/vbe.h>
 using namespace system::hal::drivers;
 using namespace system::core::memory;
 using namespace system::hal::interrupts;
@@ -16,7 +15,7 @@ heap_t system::kernel::heap;
 std::tty *system::kernel::current_tty;
 std::arraylist<std::tty *> system::kernel::ttys;
 kb::driver_t *system::kernel::kb;
-system::hal::drivers::vbe::Driver vesa;
+system::hal::drivers::vbe::Driver system::kernel::vesa;
 void system::kernel::tests::alloc_routine_check()
 {
     using namespace std;
@@ -71,11 +70,13 @@ void system::kernel::run()
     terminal_tty terminal_tty_i = terminal_tty(&kb_layout);
     debug_tty tests_tty = debug_tty(&kb_layout);
     debug_tty debug_tty_i = debug_tty(&kb_layout);
+    vbe_tty vbe_tty_i = vbe_tty(&kb_layout);
 
     ttys.add((tty*)&kernel_tty);
     ttys.add(((tty*)&terminal_tty_i));
     ttys.add(((tty*)&debug_tty_i));
-    ttys.add(((tty*)&tests_tty));
+    //ttys.add(((tty*)&tests_tty));
+    ttys.add(((tty*)&vbe_tty_i));
     ttys[1]->set(true);
     std::ctty_num = 1;
     std::dbgio::tty = true;
@@ -168,7 +169,7 @@ void system::kernel::run()
             vesa.Clear(VBE_COLOR::black);
             vesa.FilledRect(200,200,20,20,(uint32_t)VBE_COLOR::dark_cyan);
             vesa.DrawString(0,0,"Strap VBE Test",system::kernel::gfx::Fonts::System8x16,(uint32_t)VBE_COLOR::white,(uint32_t)VBE_COLOR::black);
-            vesa.Render(); vesa.Disable();
+            vesa.Render(); //vesa.Disable();
     });
     terminal_tty_i.register_command("ABOUT", [](arraylist<string> &args){
         if (args.size() != 0) return current_tty->write_line("This command doesn't take any arguments");
@@ -200,7 +201,7 @@ void system::kernel::run()
     dbgseq[1] = key_t { .focus = focus_t::PRESS, .type = keytype_t::SPECIAL, .data = { .special = special_t::ALT_L } };
     tests_tty.register_sequence(dbgseq, []() { heap.print_table(); });
 
-    tests::alloc_routine_check();
+    //tests::alloc_routine_check();
 
     while(true);
 }

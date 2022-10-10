@@ -1,23 +1,24 @@
-#include <core/io/ttys/debug_tty.hpp>
+#include <core/io/ttys/vbe_tty.hpp>
 #include <core/kernel.hpp>
 
+using namespace system::kernel;
 using namespace std;
 using namespace system::core::io::ttys;
 using namespace system::hal::drivers::kb;
 
-debug_tty::debug_tty(layout *layout) :
+vbe_tty::vbe_tty(layout *layout) :
 tty(),
 _combinations(),
-_layout(layout)
+_layout(layout),
+_in(false)
 {
     internal_init();
-    write_line("DEBUG_TTY");
 }
-debug_tty::~debug_tty()
+vbe_tty::~vbe_tty()
 {
 }
 
-key_t debug_tty::parse_scancode(scancode_t scan, bool right)
+key_t vbe_tty::parse_scancode(scancode_t scan, bool right)
 {
     array<special_t> _comb = array<special_t>(_stdin.size());
 
@@ -27,7 +28,7 @@ key_t debug_tty::parse_scancode(scancode_t scan, bool right)
     _comb.dispose();
     return r;
 }
-bool debug_tty::handle_sequence(array<key_t> &seq)
+bool vbe_tty::handle_sequence(array<key_t> &seq)
 {
     combination_handler h = nullptr;
     for (auto s : _combinations.keys())
@@ -41,15 +42,28 @@ bool debug_tty::handle_sequence(array<key_t> &seq)
     }
     return false;
 }
-void debug_tty::handle_input(key_t &k)
+void vbe_tty::handle_input(key_t &k)
 {
-    //system::kernel::ttys[2]->write_line("debug_tty: input");
 }
-bool debug_tty::register_sequence(array<key_t> &seq, combination_handler handler)
+bool vbe_tty::register_sequence(array<key_t> &seq, combination_handler handler)
 {
     _combinations.add(&seq, handler);
     return false;
 }
 
-void debug_tty::enter() {}
-void debug_tty::exit() {}
+void vbe_tty::enter()
+{
+    _in = true;
+    vesa.Init();
+    vesa.Clear(VBE_COLOR::green);
+    return vesa.Render();
+}
+void vbe_tty::exit()
+{
+    _in = false;
+    return vesa.Disable();
+}
+void vbe_tty::render()
+{
+    if (_in) return vesa.Render();
+}

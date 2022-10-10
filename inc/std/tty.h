@@ -136,7 +136,7 @@ namespace std
         void write_line(string str);
     public:
         void clear();
-        void render();
+        virtual void render();
     public:
         inline system::core::io::color get_fg() { return _stdout.get_fg(); }
         inline system::core::io::color get_bg() { return _stdout.get_bg(); }
@@ -157,6 +157,9 @@ namespace std
     public:
         static void init();
         void set(bool first = false);
+    public:
+        virtual void enter() = 0;
+        virtual void exit() = 0;
     };
 }
 

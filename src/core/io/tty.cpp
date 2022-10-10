@@ -243,7 +243,9 @@ void tty::set(bool first)
         if (current_tty->_stdin.size() != 0) this->_stdin.clone(current_tty->_stdin);
         else this->_stdin.clear();
         current_tty->_stdout._lock = true;
+        current_tty->exit();
     }
     current_tty = this;
+    current_tty->enter();
     this->_stdout._lock = false;
 }
