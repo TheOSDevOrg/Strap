@@ -33,7 +33,6 @@ namespace system::kernel
     extern std::tty *current_tty;
     extern std::arraylist<std::tty *> ttys;
     extern system::hal::drivers::kb::driver_t *kb;
-
     struct environment
     {
         system::hal::drivers::serial::serial_t stddbg;

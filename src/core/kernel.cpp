@@ -3,7 +3,7 @@
 #include <hal/interrupts/gdt.h>
 #include <hal/interrupts/idt.h>
 #include <core/io/layouts/english.hpp>
-
+#include <hal/drivers/vbe.h>
 using namespace system::hal::drivers;
 using namespace system::core::memory;
 using namespace system::hal::interrupts;
@@ -16,7 +16,7 @@ heap_t system::kernel::heap;
 std::tty *system::kernel::current_tty;
 std::arraylist<std::tty *> system::kernel::ttys;
 kb::driver_t *system::kernel::kb;
-
+system::hal::drivers::vbe::Driver vesa;
 void system::kernel::tests::alloc_routine_check()
 {
     using namespace std;
@@ -37,6 +37,8 @@ void system::kernel::bootstrap(system::grub::multiboot_hdr *mboot)
 {
     std::dbgio::serial = false;
     std::dbgio::debug_lvl = std::dbgio::dbgtype::WARNING;
+    system::grub::init(mboot);
+
     dprint_info("kernel environment has been loaded!");
     dprint_info("bootstrap complete!");
 }
@@ -74,8 +76,8 @@ void system::kernel::run()
     ttys.add(((tty*)&terminal_tty_i));
     ttys.add(((tty*)&debug_tty_i));
     ttys.add(((tty*)&tests_tty));
-    ttys[3]->set(true);
-    std::ctty_num = 3;
+    ttys[1]->set(true);
+    std::ctty_num = 1;
     std::dbgio::tty = true;
     std::dbgio::serial = true;
 
@@ -157,6 +159,17 @@ void system::kernel::run()
         alloc(200);
         current_tty->write_line("alloc was successfull");
     });
+    terminal_tty_i.register_command("MBOOT", [](arraylist<string> &args){
+        current_tty->write("Bootloader: ");
+        current_tty->write_line(system::grub::get()->bootloader_name);
+    });
+    terminal_tty_i.register_command("VBE", [](arraylist<string> &args){
+        vesa.Init();
+            vesa.Clear(VBE_COLOR::black);
+            vesa.FilledRect(200,200,20,20,(uint32_t)VBE_COLOR::dark_cyan);
+            vesa.DrawString(0,0,"Strap VBE Test",system::kernel::gfx::Fonts::System8x16,(uint32_t)VBE_COLOR::white,(uint32_t)VBE_COLOR::black);
+            vesa.Render(); vesa.Disable();
+    });
     terminal_tty_i.register_command("ABOUT", [](arraylist<string> &args){
         if (args.size() != 0) return current_tty->write_line("This command doesn't take any arguments");
         current_tty->write_line("Strap kernel [v 0.1.2022.09.10]");
@@ -168,7 +181,6 @@ void system::kernel::run()
         numstr(ctty_num+1, 10, s);
         current_tty->write_line(s);
     });
-
     array<key_t> seq = array<key_t>(1);
 
     seq[0] = key_t { .focus = focus_t::PRESS, .type = keytype_t::SPECIAL, .data = { .special = special_t::CUR_UP } };

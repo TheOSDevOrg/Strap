@@ -1,32 +1,42 @@
 #pragma once
 #include <stdint.h>
 #include <std/decl.h>
-
+#include <boot/mboot.h>
+#include <gfx/colors.hpp>
+#include <gfx/gfx_common.hpp>
+#include <gfx/font.h>
 #ifdef __cplusplus
 
 namespace system::hal::drivers::vbe
 {
-    struct vbe_mode_block
+    typedef struct
     {
-        uint16_t attrs;
-        uint8_t  win_a, win_b;
-        uint16_t gran;
-        uint16_t win_size;
-        uint16_t seg_a, seg_b;
-        uint16_t winfunc[2];
-        uint16_t pitch, width, height;
-        uint8_t  char_width, char_height, planes, depth, banks;
-        uint8_t  memory_model, bank_size, image_pages;
-        uint8_t  reserved0;
-        uint8_t  red_mask, red_position;
-        uint8_t  green_mask, green_position;
-        uint8_t  blue_mask, blue_position;
-        uint8_t  rsv_mask, rsv_position;
-        uint8_t  direct_color;
-        uint32_t phy_addr;
-        uint32_t reserved1;
-        uint16_t reserved2;
-    } packed__;
-}
+        uint16_t di, si, bp, sp, bx, dx, cx, ax;
+        uint16_t gs, fs, es, ds, eflags;
+    } packed__ registers16_t;
 
+
+    __cdecl { extern void int32(uint8_t interrupt, system::hal::drivers::vbe::registers16_t* regs); }
+
+    class Driver
+    {
+        public:
+            void Init();
+            void SetMode(int w, int h);
+            void SetPixel(uint32_t x,uint32_t y, uint32_t color);
+            void FilledRect(int x, int y, int w, int h, uint32_t color);
+            void DrawChar(int x, int y, char c, system::kernel::gfx::Font font, uint32_t fg, uint32_t bg);
+            void DrawString(int x, int y, char* str, system::kernel::gfx::Font font, uint32_t fg, uint32_t bg);
+            void Clear();
+            void Clear(uint32_t color);
+            void Clear(VBE_COLOR color);
+            void Render();
+            void Disable();
+        private:
+            void FillHeaders();
+            system::grub::vbe_ctrl_info_t CtrlInfo;
+            system::grub::vbe_mode_info_t ModeInfo;
+            uint32_t Size;
+    };
+ }
 #endif
