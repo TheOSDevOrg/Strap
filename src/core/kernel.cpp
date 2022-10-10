@@ -157,6 +157,17 @@ void system::kernel::run()
         alloc(200);
         current_tty->write_line("alloc was successfull");
     });
+    terminal_tty_i.register_command("ABOUT", [](arraylist<string> &args){
+        if (args.size() != 0) return current_tty->write_line("This command doesn't take any arguments");
+        current_tty->write_line("Strap kernel [v 0.1.2022.09.10]");
+    });
+    terminal_tty_i.register_command("INFO", [](arraylist<string> &args){
+        if (args.size() != 0) return current_tty->write_line("This command doesn't take any arguments");
+        current_tty->write("StrapTerm running on tty ");
+        char s[2];
+        numstr(ctty_num+1, 10, s);
+        current_tty->write_line(s);
+    });
 
     array<key_t> seq = array<key_t>(1);
 
