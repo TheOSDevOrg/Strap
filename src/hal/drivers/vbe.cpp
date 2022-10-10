@@ -2,6 +2,7 @@
 #include <core/io/debug.hpp>
 #include <gfx/doublebuffer.hpp>
 #include <core/memory.h>
+#include <core/kernel.hpp>
 #define VBE_CTRL_PTR 0x80000
 #define LNG_PTR(seg, off) ((seg << 4) | off)
 #define REAL_PTR(arr) LNG_PTR(arr[1], arr[0])
@@ -114,6 +115,15 @@ namespace system::hal::drivers::vbe
     void Driver::Render()
     {
         memcpy((uint32_t*)ModeInfo.physical_base,vbe_buffer.buffer,Size);
+    }
+    void Driver::Disable()
+    {
+        registers16_t regs;
+        memset(&regs, 0, sizeof(registers16_t));
+        regs.ax = 0x4F02;
+        regs.bx = 0x03;
+        int32(0x10, &regs);
+        system::kernel::current_tty->write_line("VBE Driver Disabled");
     }
 
 }

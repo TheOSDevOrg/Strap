@@ -168,7 +168,7 @@ void system::kernel::run()
             vesa.Clear(VBE_COLOR::black);
             vesa.FilledRect(200,200,20,20,(uint32_t)VBE_COLOR::dark_cyan);
             vesa.DrawString(0,0,"Strap VBE Test",system::kernel::gfx::Fonts::System8x16,(uint32_t)VBE_COLOR::white,(uint32_t)VBE_COLOR::black);
-            for(;;) { vesa.Render(); }
+            vesa.Render(); vesa.Disable();
     });
     array<key_t> seq = array<key_t>(1);
 

@@ -31,6 +31,7 @@ namespace system::hal::drivers::vbe
             void Clear(uint32_t color);
             void Clear(VBE_COLOR color);
             void Render();
+            void Disable();
         private:
             void FillHeaders();
             system::grub::vbe_ctrl_info_t CtrlInfo;
