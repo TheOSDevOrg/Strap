@@ -5,7 +5,10 @@
 #include <gfx/colors.hpp>
 #include <gfx/gfx_common.hpp>
 #include <gfx/font.h>
+#include <gfx/doublebuffer.hpp>
 #ifdef __cplusplus
+
+#define __RGB_COLOR_(r, g, b) ((r << 16) | (g << 8) | b)
 
 namespace system::hal::drivers::vbe
 {
@@ -20,8 +23,11 @@ namespace system::hal::drivers::vbe
 
     class Driver
     {
+        private:
+        system::kernel::gfx::buffer_info_t vbe_buffer;
+        bool running = false;
         public:
-            void Init();
+            void Init(system::kernel::gfx::buffer_info_t buffer);
             void SetMode(int w, int h);
             void SetPixel(uint32_t x,uint32_t y, uint32_t color);
             void FilledRect(int x, int y, int w, int h, uint32_t color);

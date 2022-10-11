@@ -18,7 +18,7 @@ __cdecl bool   freelst(void **lst);
 __cdecl void * realloc(void *data, size_t sz);
 
 __cdecl void memcpyd(uint32_t *dst, uint32_t *src, size_t sz);
-__cdecl void memsetd(uint32_t *dst, uint16_t data, size_t sz);
+__cdecl void memsetd(uint32_t *dst, uint32_t data, size_t sz);
 
 __cdecl void memcpyw(uint16_t *dst, uint16_t *src, size_t sz);
 __cdecl void memsetw(uint16_t *dst, uint16_t data, size_t sz);

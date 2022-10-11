@@ -112,5 +112,16 @@ namespace std
         T * c_list() { return (T *)_list; }
         size_t size() const { return _size; }
         bool is_null() const { return _list == nullptr; }
+        bool is_resident() const { return _stay; }
+        array<T> & make_volatile()
+        {
+            _stay = false;
+            return *this;
+        }
+        array<T> & make_resident()
+        {
+            _stay = true;
+            return *this;
+        }
     };
 }

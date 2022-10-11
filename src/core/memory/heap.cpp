@@ -251,15 +251,15 @@ void heap_t::print_table()
     system::kernel::ttys[2]->write(s);
     system::kernel::ttys[2]->write_line(" invalid entries");
 
-    system::kernel::ttys[3]->write_line("visualizer:");
+    system::kernel::current_tty->write_line("visualizer:");
     for (int i = 0; i < _entries_count; i++)
     {
         char s[4];
         auto e = at(i);
         numstr(e->size, 10, s);
-        system::kernel::ttys[3]->write(s);
-        if(!e->free) system::kernel::ttys[3]->write('*');
-        system::kernel::ttys[3]->write(" ");
+        system::kernel::current_tty->write(s);
+        if(!e->free) system::kernel::current_tty->write('*');
+        system::kernel::current_tty->write(" ");
     }
-    system::kernel::ttys[3]->write_line("");
+    system::kernel::current_tty->write_line("");
 }

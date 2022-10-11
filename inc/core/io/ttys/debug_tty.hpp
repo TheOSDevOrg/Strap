@@ -12,7 +12,7 @@ namespace system::core::io::ttys
     class debug_tty final : public std::tty
     {
     private:
-        std::dictionary<std::array<std::key_t>*, std::combination_handler> _combinations;
+        std::dictionary<std::array<std::key_t>, std::combination_handler> _combinations;
         layout *_layout;
     public:
         debug_tty(layout *layout);

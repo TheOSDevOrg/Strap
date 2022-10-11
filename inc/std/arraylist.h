@@ -208,6 +208,10 @@ namespace std
         {
             _stay = false;
         }
+        void make_resident()
+        {
+            _stay = true;
+        }
     };
 }
 

@@ -17,7 +17,7 @@ namespace system::core::io::ttys
         typedef void (*cmd_callback)(std::arraylist<std::string> &args);
     private:
         layout *_layout;
-        std::dictionary<std::array<std::key_t>*, std::combination_handler> _combinations;
+        std::dictionary<std::array<std::key_t>, std::combination_handler> _combinations;
         std::dictionary<std::string, cmd_callback> _callbacks;
         std::string _input;
     public:
