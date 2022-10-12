@@ -75,8 +75,8 @@ void system::kernel::run()
     ttys.add((tty*)&kernel_tty);
     ttys.add(((tty*)&terminal_tty_i));
     ttys.add(((tty*)&debug_tty_i));
-    //ttys.add(((tty*)&tests_tty));
-    ttys.add(((tty*)&vbe_tty_i));
+    ttys.add(((tty*)&tests_tty));
+    //ttys.add(((tty*)&vbe_tty_i));
     ttys[1]->set(true);
     std::ctty_num = 1;
     std::dbgio::tty = true;

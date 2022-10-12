@@ -35,7 +35,7 @@ namespace system::core::io::ttys
         inline void register_command(std::string name, cmd_callback handler)
         {
             _input.clear();
-            return _callbacks.add(std::string(name.c_str(), true), handler);
+            return _callbacks.add(name.make_resident(), handler);
         }
     public:
         void enter() override;

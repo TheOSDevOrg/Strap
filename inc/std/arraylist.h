@@ -71,11 +71,13 @@ namespace std
             if (!_extra)
             {
                 _list = (T *)realloc((void *)_list, (++_count)*sizeof(T));
-                _list[_count-1] = object;
+                if (sizeof(T) <= 4) _list[_count-1] = object;
+                else memcpy((void *)&_list[_count-1], (void*)&object, sizeof(T));
             }
             else
             {
-                _list[_count++] = object;
+                if (sizeof(T) <= 4) _list[_count++] = object;
+                else memcpy((void*)&_list[_count++], (void *)&object, sizeof(T));
                 _extra--;
             }
 
@@ -90,7 +92,8 @@ namespace std
             _count--;
             for (int i = index; i < _count; i++)
             {
-                _list[i] = _list[i+1];
+                if (sizeof(T) <= 4) _list[i] = _list[i+1];
+                else memcpy((void *)&_list[i], (void*)&_list[i+1], sizeof(T));
             }
 
             _extra++;

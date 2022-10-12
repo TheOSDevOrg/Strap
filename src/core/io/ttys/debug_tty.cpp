@@ -33,6 +33,7 @@ bool debug_tty::handle_sequence(array<key_t> &seq)
     if ((i = _combinations.keys().find(seq)) != -1)
     {
         _combinations.values().at(i)();
+        return true;
     }
     return false;
 }

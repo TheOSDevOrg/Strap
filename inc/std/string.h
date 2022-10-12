@@ -18,14 +18,14 @@ namespace std
         bool _stay;
     public:
         base_string(size_t limit = 0, bool stay = false)
-        : _buffer(limit, stay),
+        : _buffer(limit, true),
           _stay(stay)
         {
             _hash = 0;
             _buffer.add(0);
         }
         base_string(char str[], bool stay = false)
-        : _buffer(0, stay),
+        : _buffer(0, true),
           _stay(stay)
         {
             while (*str) _buffer.add(*(str++)); 
@@ -34,14 +34,15 @@ namespace std
         }
         ~base_string()
         {
-            _buffer.~arraylist();
-            if (!_stay) _hash = 0;
+            if (_stay) return;
+            _buffer.dispose();
+            _hash = 0;
         }
     public:
         void dispose()
         {
-            _buffer.dispose();
-            _hash = 0;
+            _stay = false;
+            this->~base_string();
         }
     public:
         void clear()
@@ -193,14 +194,13 @@ namespace std
                 return;
             }
 
-            base_string<T> temp = base_string<T>((size_t)0);
+            base_string<T> temp = base_string<T>((size_t)0, stay);
 
             for (auto c : *this)
             {
                 if (c == separator)
                 {
                     out.add(base_string<T>(temp.c_str(), stay));
-                    temp.dispose();
                     temp = "";
                     continue;
                 }
@@ -208,6 +208,7 @@ namespace std
                 temp.add(c);
             }
             if (temp != "") out.add(base_string<T>(temp.c_str(), stay));
+            temp.dispose();
         }
         int to_number(int base = 10)
         {
@@ -235,9 +236,8 @@ namespace std
         }
         base_string<T> & operator=(base_string<T> &right)
         {
-            _buffer.dispose();
-            _buffer = right._buffer;
-            _buffer.make_volatile();
+            _buffer.clone(right._buffer);
+            _stay = right._stay;
             _hash = right._hash;
             return *this;
         }
@@ -265,6 +265,10 @@ namespace std
         T * c_str() { return (T *)_buffer.c_list(); }
         size_t size() { return _buffer.size()-1; }
         uint32_t hash() { return _hash; }
+    public:
+        bool is_resident() { return _stay; }
+        base_string<T> & make_volatile() { _stay = false; return *this; }
+        base_string<T> & make_resident() { _stay = true; return *this; }
     };
     typedef base_string<char> string;
 }

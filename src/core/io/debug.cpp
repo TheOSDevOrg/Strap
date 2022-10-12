@@ -1,5 +1,6 @@
 #include <core/io/debug.hpp>
 #include <core/kernel.hpp>
+#include <core/io/ttys/error_tty.hpp>
 
 using namespace std;
 
@@ -128,19 +129,10 @@ bool dbgio::fatal_error(const char *fmt)
     using namespace system::core::io::ttys;
     using namespace system::core::io;
 
-    layouts::english kb_layout = layouts::english();
-    debug_tty error_tty = debug_tty(&kb_layout);
+    error_tty error_tty_i = error_tty((char *)fmt);
 
-    error_tty.set_bg(color::blue);
-    error_tty.set_fg(color::white);
-    error_tty.clear();
-
-    error_tty.write_line("An error has occurred and your computer has been halted to prevent any further damage.\n");
-    error_tty.write_line("Technical info:");
-    error_tty.write_line((char *)fmt);
-
-    error_tty.set();
-    error_tty.render();
+    error_tty_i.set();
+    error_tty_i.render();
 
     asm("hlt");
     while(true);

@@ -3,11 +3,8 @@
 #include <core/memory.h>
 #include <core/kernel.hpp>
 #define VBE_CTRL_PTR 0x80000
-#define LNG_PTR(seg, off) ((seg << 4) | off)
-#define REAL_PTR(arr) LNG_PTR(arr[1], arr[0])
-#define SEG(addr) (((uint32_t)addr >> 4) & 0xF000)
-#define OFF(addr) ((uint32_t)addr & 0xFFFF)
 using namespace system::kernel::gfx;
+using namespace system::hal::drivers::realmode;
 namespace system::hal::drivers::vbe
 {
     void Driver::Init(system::kernel::gfx::buffer_info_t buffer)

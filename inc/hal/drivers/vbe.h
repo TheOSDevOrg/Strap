@@ -6,21 +6,13 @@
 #include <gfx/gfx_common.hpp>
 #include <gfx/font.h>
 #include <gfx/doublebuffer.hpp>
+#include <hal/drivers/realmode.h>
 #ifdef __cplusplus
 
 #define __RGB_COLOR_(r, g, b) ((r << 16) | (g << 8) | b)
 
 namespace system::hal::drivers::vbe
 {
-    typedef struct
-    {
-        uint16_t di, si, bp, sp, bx, dx, cx, ax;
-        uint16_t gs, fs, es, ds, eflags;
-    } packed__ registers16_t;
-
-
-    __cdecl { extern void int32(uint8_t interrupt, system::hal::drivers::vbe::registers16_t* regs); }
-
     class Driver
     {
         private:

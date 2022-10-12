@@ -18,8 +18,8 @@ terminal_tty::terminal_tty(layout *l, system::core::io::color fg, system::core::
     _stdout.clean();
 
     _stdout.clean(system::core::io::color::white, system::core::io::color::blue, 0, 0);
-    _stdout.clean(system::core::io::color::white, system::core::io::color::cyan, (_stdout.get_max_x()/2)-((9/2)+1), 0, (_stdout.get_max_x()/2)+((9/2)+1), 0);
-    _stdout.puts_color_at("TERMINAL", system::core::io::color::white, system::core::io::color::cyan, (_stdout.get_max_x()/2)-(9/2), 0);
+    _stdout.clean(system::core::io::color::white, system::core::io::color::cyan, (_stdout.get_max_x()/2)-((8/2)+1), 0, (_stdout.get_max_x()/2)+((8/2)+1), 0);
+    _stdout.puts_color_at("TERMINAL", system::core::io::color::white, system::core::io::color::cyan, (_stdout.get_max_x()/2)-(8/2), 0);
 
     print_term();
 }
@@ -101,10 +101,14 @@ void terminal_tty::handle_command()
     }
     kernel::ttys[2]->write("\n");
 
-    if(_callbacks.keys().find(cmd_name) != -1) 
+    int i;
+    if((i = _callbacks.keys().find(cmd_name)) != -1) 
     {
-        cmd_callback h = _callbacks[cmd_name];
-        if (h != nullptr) h(args);
+        cmd_callback h = _callbacks.values().at(i);
+        if (h != nullptr)
+        {
+            h(args);
+        }
     }
     else if (cmd_name != "")
     {

@@ -248,6 +248,7 @@ void tty::set(bool first)
         current_tty->exit();
     }
     current_tty = this;
-    current_tty->enter();
+    this->enter();
     this->_stdout._lock = false;
+    this->render();
 }

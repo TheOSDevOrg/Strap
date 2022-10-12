@@ -131,7 +131,7 @@ __cdecl void * realloc(void *data, size_t sz)
 {
     if (!system::env::current_heap->contains((uintptr_t)data))
     {
-        dprint_warn("tried to realloc a pointer outside of the kernel heap");
+        dprint_warn("tried to realloc a pointer outside of the current heap");
         return data;
     }
     
