@@ -1,5 +1,6 @@
 #include <core/io/debug.hpp>
 #include <core/kernel.hpp>
+#include <core/io/ttys/error_tty.hpp>
 
 using namespace std;
 
@@ -125,28 +126,14 @@ bool dbgio::print_warn(const char *fmt)
 }
 bool dbgio::fatal_error(const char *fmt)
 {
-    int s = 0, j = 0;
-    while (fmt[j++]) s++;
+    using namespace system::core::io::ttys;
+    using namespace system::core::io;
 
-    if (tty)
-    {
-        system::kernel::ttys[0]->set_fg(system::core::io::color::light_gray);
-        system::kernel::ttys[0]->write("[");
-        system::kernel::ttys[0]->set_fg(system::core::io::color::red);
-        system::kernel::ttys[0]->write("ERROR");
-        system::kernel::ttys[0]->set_fg(system::core::io::color::light_gray);
-        system::kernel::ttys[0]->write("] ");
-        system::kernel::ttys[0]->set_fg(system::core::io::color::white);
-        system::kernel::ttys[0]->write_line((char *)fmt);
-    }
+    error_tty error_tty_i = error_tty((char *)fmt);
 
-    system::kernel::env->stddbg.writes_color("[", 1, 0x0F);
-    system::kernel::env->stddbg.writes_color("ERROR", 5, 0x0C);
-    system::kernel::env->stddbg.writes_color("]", 1, 0x0F);
-    system::kernel::env->stddbg.writes(" ", 1);
-    system::kernel::env->stddbg.writes_color_ln(fmt, s, 0xFF);
+    error_tty_i.set();
+    error_tty_i.render();
 
-    print_warn("The system is about to be halt");
     asm("hlt");
     while(true);
     return true;

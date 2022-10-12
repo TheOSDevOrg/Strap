@@ -7,7 +7,7 @@ using namespace std;
 terminal_tty::terminal_tty(layout *l, system::core::io::color fg, system::core::io::color bg)
 : tty(0, 1),
   _layout(l),
-  _combinations(),
+  _combinations(0, true),
   _input((size_t)0, true),
   _callbacks(0, true)
 {
@@ -18,8 +18,8 @@ terminal_tty::terminal_tty(layout *l, system::core::io::color fg, system::core::
     _stdout.clean();
 
     _stdout.clean(system::core::io::color::white, system::core::io::color::blue, 0, 0);
-    _stdout.clean(system::core::io::color::white, system::core::io::color::cyan, (_stdout.get_max_x()/2)-((9/2)+1), 0, (_stdout.get_max_x()/2)+((9/2)+1), 0);
-    _stdout.puts_color_at("TERMINAL", system::core::io::color::white, system::core::io::color::cyan, (_stdout.get_max_x()/2)-(9/2), 0);
+    _stdout.clean(system::core::io::color::white, system::core::io::color::cyan, (_stdout.get_max_x()/2)-((8/2)+1), 0, (_stdout.get_max_x()/2)+((8/2)+1), 0);
+    _stdout.puts_color_at("TERMINAL", system::core::io::color::white, system::core::io::color::cyan, (_stdout.get_max_x()/2)-(8/2), 0);
 
     print_term();
 }
@@ -36,26 +36,25 @@ key_t terminal_tty::parse_scancode(system::hal::drivers::kb::scancode_t scan, bo
 }
 bool terminal_tty::handle_sequence(array<key_t> &seq)
 {
-    combination_handler h = nullptr;
-    for (auto s : _combinations.keys())
+    //combination_handler h = nullptr;
+    int i;
+    if ((i = _combinations.keys().find(seq)) != -1)
     {
-        if (s->operator==(seq) && (h = _combinations[s]) != nullptr) break;
-    }
-    if (h != nullptr)
-    {
-        h();
+        _combinations.values().at(i)();
         return true;
     }
     return false;
 }
 bool terminal_tty::register_sequence(array<key_t> &seq, combination_handler handler)
 {
-    _combinations.add(&seq, handler);
-    return false;
+    _combinations.add(seq.make_resident(), handler);
+    return true;
 }
 
 void terminal_tty::handle_input(key_t &k)
 {
+    if (k.type != keytype_t::NORMAL) return;
+
     char c = k.data.character;
 
     if (c == '\b')
@@ -102,9 +101,22 @@ void terminal_tty::handle_command()
     }
     kernel::ttys[2]->write("\n");
 
-    cmd_callback h = _callbacks[cmd_name];
+    int i;
+    if((i = _callbacks.keys().find(cmd_name)) != -1) 
+    {
+        cmd_callback h = _callbacks.values().at(i);
+        if (h != nullptr)
+        {
+            h(args);
+        }
+    }
+    else if (cmd_name != "")
+    {
+        kernel::current_tty->write("StrapTerm: command ");
+        kernel::current_tty->write(cmd_name);
+        kernel::current_tty->write_line(" not found");
+    }
     cmd_name.dispose();
-    if (h != nullptr) h(args);
     for (auto s : args) s.dispose();
     args.dispose();
 }
@@ -115,5 +127,5 @@ void terminal_tty::print_term()
     _stdout.putc(' ');
 }
 
-void terminal_tty::enter() {}
+void terminal_tty::enter() { _input.clear(); }
 void terminal_tty::exit() {}

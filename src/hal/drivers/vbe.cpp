@@ -1,23 +1,17 @@
 #include <hal/drivers/vbe.h>
 #include <core/io/debug.hpp>
-#include <gfx/doublebuffer.hpp>
 #include <core/memory.h>
 #include <core/kernel.hpp>
 #define VBE_CTRL_PTR 0x80000
-#define LNG_PTR(seg, off) ((seg << 4) | off)
-#define REAL_PTR(arr) LNG_PTR(arr[1], arr[0])
-#define SEG(addr) (((uint32_t)addr >> 4) & 0xF000)
-#define OFF(addr) ((uint32_t)addr & 0xFFFF)
 using namespace system::kernel::gfx;
+using namespace system::hal::drivers::realmode;
 namespace system::hal::drivers::vbe
 {
-    buffer_info_t vbe_buffer;
-    bool running = false;
-    void Driver::Init()
+    void Driver::Init(system::kernel::gfx::buffer_info_t buffer)
     {
         if (running) return;
         SetMode(800,600);
-        vbe_buffer = vbe_buffer_init(800,600);
+        vbe_buffer = buffer;
     }
     void Driver::SetMode(int w, int h)
     {
@@ -104,15 +98,15 @@ namespace system::hal::drivers::vbe
     }
     void Driver::Clear()
     {
-        memsetd(vbe_buffer.buffer,0,Size);
+        memset(vbe_buffer.buffer,0,Size);
     }
     void Driver::Clear(uint32_t Color)
     {
-        memsetd(vbe_buffer.buffer,Color,Size);
+        memset(vbe_buffer.buffer,Color,Size);
     }
     void Driver::Clear(VBE_COLOR Color)
     {
-        memsetd(vbe_buffer.buffer,(uint32_t)Color,Size);
+        memset(vbe_buffer.buffer,(uint32_t)Color,Size);
     }
     void Driver::Render()
     {

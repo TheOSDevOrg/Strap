@@ -6,13 +6,15 @@ using namespace std;
 using namespace system::core::io::ttys;
 using namespace system::hal::drivers::kb;
 
-vbe_tty::vbe_tty(layout *layout) :
-tty(),
+vbe_tty::vbe_tty(layout *layout, uint16_t w, uint16_t h) : tty(),
 _combinations(),
 _layout(layout),
-_in(false)
+_in(false),
+_buffer(),
+vesa()
 {
     internal_init();
+    _buffer = system::kernel::gfx::vbe_buffer_init(w, h);
 }
 vbe_tty::~vbe_tty()
 {
@@ -30,14 +32,10 @@ key_t vbe_tty::parse_scancode(scancode_t scan, bool right)
 }
 bool vbe_tty::handle_sequence(array<key_t> &seq)
 {
-    combination_handler h = nullptr;
-    for (auto s : _combinations.keys())
+    int i;
+    if ((i = _combinations.keys().find(seq)) != -1)
     {
-        if (s->operator==(seq) && (h = _combinations[s]) != nullptr) break;
-    }
-    if (h != nullptr)
-    {
-        h();
+        _combinations.values().at(i)();
         return true;
     }
     return false;
@@ -47,15 +45,15 @@ void vbe_tty::handle_input(key_t &k)
 }
 bool vbe_tty::register_sequence(array<key_t> &seq, combination_handler handler)
 {
-    _combinations.add(&seq, handler);
-    return false;
+    _combinations.add(seq.make_resident(), handler);
+    return true;
 }
 
 void vbe_tty::enter()
 {
     _in = true;
-    vesa.Init();
-    vesa.Clear(VBE_COLOR::green);
+    vesa.Init(_buffer);
+    vesa.Clear(__RGB_COLOR_(255, 255, 255));
     return vesa.Render();
 }
 void vbe_tty::exit()

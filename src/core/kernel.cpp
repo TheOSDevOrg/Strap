@@ -15,7 +15,6 @@ heap_t system::kernel::heap;
 std::tty *system::kernel::current_tty;
 std::arraylist<std::tty *> system::kernel::ttys;
 kb::driver_t *system::kernel::kb;
-system::hal::drivers::vbe::Driver system::kernel::vesa;
 void system::kernel::tests::alloc_routine_check()
 {
     using namespace std;
@@ -60,6 +59,7 @@ void system::kernel::run()
 {
     using namespace std;
 
+    std::dbgio::serial = true;
     out::sinit();
 
     tty::init();
@@ -75,12 +75,11 @@ void system::kernel::run()
     ttys.add((tty*)&kernel_tty);
     ttys.add(((tty*)&terminal_tty_i));
     ttys.add(((tty*)&debug_tty_i));
-    //ttys.add(((tty*)&tests_tty));
-    ttys.add(((tty*)&vbe_tty_i));
+    ttys.add(((tty*)&tests_tty));
+    //ttys.add(((tty*)&vbe_tty_i));
     ttys[1]->set(true);
     std::ctty_num = 1;
     std::dbgio::tty = true;
-    std::dbgio::serial = true;
 
     terminal_tty_i.register_command("TEST", [](arraylist<string> &args) {
         current_tty->write_line("Hello, World!");
@@ -164,13 +163,6 @@ void system::kernel::run()
         current_tty->write("Bootloader: ");
         current_tty->write_line(system::grub::get()->bootloader_name);
     });
-    terminal_tty_i.register_command("VBE", [](arraylist<string> &args){
-        vesa.Init();
-            vesa.Clear(VBE_COLOR::black);
-            vesa.FilledRect(200,200,20,20,(uint32_t)VBE_COLOR::dark_cyan);
-            vesa.DrawString(0,0,"Strap VBE Test",system::kernel::gfx::Fonts::System8x16,(uint32_t)VBE_COLOR::white,(uint32_t)VBE_COLOR::black);
-            vesa.Render(); //vesa.Disable();
-    });
     terminal_tty_i.register_command("ABOUT", [](arraylist<string> &args){
         if (args.size() != 0) return current_tty->write_line("This command doesn't take any arguments");
         current_tty->write_line("Strap kernel [v 0.1.2022.09.10]");
@@ -181,6 +173,10 @@ void system::kernel::run()
         char s[2];
         numstr(ctty_num+1, 10, s);
         current_tty->write_line(s);
+    });
+    terminal_tty_i.register_command("FATAL", [](arraylist<string> &args){
+        if (args.size() != 0) return current_tty->write_line("This command doesn't take any arguments");
+        asm ("int $0x0");
     });
     array<key_t> seq = array<key_t>(1);
 

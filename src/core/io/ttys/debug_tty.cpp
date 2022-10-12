@@ -29,14 +29,10 @@ key_t debug_tty::parse_scancode(scancode_t scan, bool right)
 }
 bool debug_tty::handle_sequence(array<key_t> &seq)
 {
-    combination_handler h = nullptr;
-    for (auto s : _combinations.keys())
+    int i;
+    if ((i = _combinations.keys().find(seq)) != -1)
     {
-        if (s->operator==(seq) && (h = _combinations[s]) != nullptr) break;
-    }
-    if (h != nullptr)
-    {
-        h();
+        _combinations.values().at(i)();
         return true;
     }
     return false;
@@ -47,8 +43,8 @@ void debug_tty::handle_input(key_t &k)
 }
 bool debug_tty::register_sequence(array<key_t> &seq, combination_handler handler)
 {
-    _combinations.add(&seq, handler);
-    return false;
+    _combinations.add(seq.make_resident(), handler);
+    return true;
 }
 
 void debug_tty::enter() {}

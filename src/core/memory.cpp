@@ -8,7 +8,7 @@ __cdecl void memcpyd(uint32_t *dst, uint32_t *src, size_t sz)
 {
     for (size_t i = 0; i < sz; i++) dst[i] = src[i];
 }
-__cdecl void memsetd(uint32_t *dst, uint16_t data, size_t sz)
+__cdecl void memsetd(uint32_t *dst, uint32_t data, size_t sz)
 {
     for (size_t i = 0; i < sz; i++) dst[i] = data;
 }
@@ -52,9 +52,9 @@ __cdecl void memcpy(void *dst, void *src, size_t sz)
 }
 __cdecl void memset(void *dst, int data, size_t sz)
 {
-    if (data < INT8_MAX) memsetb((uint8_t*)dst, (uint8_t)data, sz);
-    else if (data < INT16_MAX) memsetw((uint16_t*)dst, (uint16_t)data, sz);
-    else memsetd((uint32_t*)dst, (uint32_t)data, sz);
+    if (data < UINT8_MAX) memsetb((uint8_t*)dst, (uint8_t)data, sz);
+    else if (data < UINT16_MAX) memsetw((uint16_t*)dst, (uint16_t)data, sz/2);
+    else memsetd((uint32_t*)dst, (uint32_t)data, sz/4);
 }
 
 __cdecl void * kalloc(size_t sz)
@@ -111,7 +111,6 @@ __cdecl void * mrealloc(void *data, size_t sz)
 
 __cdecl void * alloc(size_t sz)
 {
-    system::env::current_heap->defragment();
     return system::env::current_heap->unsafe_alloc(sz);
 }
 __cdecl bool free(void *data)
@@ -132,7 +131,7 @@ __cdecl void * realloc(void *data, size_t sz)
 {
     if (!system::env::current_heap->contains((uintptr_t)data))
     {
-        dprint_warn("tried to realloc a pointer outside of the kernel heap");
+        dprint_warn("tried to realloc a pointer outside of the current heap");
         return data;
     }
     

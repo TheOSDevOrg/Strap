@@ -17,7 +17,7 @@ namespace system::core::io::ttys
         typedef void (*cmd_callback)(std::arraylist<std::string> &args);
     private:
         layout *_layout;
-        std::dictionary<std::array<std::key_t>*, std::combination_handler> _combinations;
+        std::dictionary<std::array<std::key_t>, std::combination_handler> _combinations;
         std::dictionary<std::string, cmd_callback> _callbacks;
         std::string _input;
     public:
@@ -35,7 +35,7 @@ namespace system::core::io::ttys
         inline void register_command(std::string name, cmd_callback handler)
         {
             _input.clear();
-            return _callbacks.add(std::string(name.c_str(), true), handler);
+            return _callbacks.add(name.make_resident(), handler);
         }
     public:
         void enter() override;

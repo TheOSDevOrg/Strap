@@ -5,23 +5,21 @@
 #include <gfx/colors.hpp>
 #include <gfx/gfx_common.hpp>
 #include <gfx/font.h>
+#include <gfx/doublebuffer.hpp>
+#include <hal/drivers/realmode.h>
 #ifdef __cplusplus
+
+#define __RGB_COLOR_(r, g, b) ((r << 16) | (g << 8) | b)
 
 namespace system::hal::drivers::vbe
 {
-    typedef struct
-    {
-        uint16_t di, si, bp, sp, bx, dx, cx, ax;
-        uint16_t gs, fs, es, ds, eflags;
-    } packed__ registers16_t;
-
-
-    __cdecl { extern void int32(uint8_t interrupt, system::hal::drivers::vbe::registers16_t* regs); }
-
     class Driver
     {
+        private:
+        system::kernel::gfx::buffer_info_t vbe_buffer;
+        bool running = false;
         public:
-            void Init();
+            void Init(system::kernel::gfx::buffer_info_t buffer);
             void SetMode(int w, int h);
             void SetPixel(uint32_t x,uint32_t y, uint32_t color);
             void FilledRect(int x, int y, int w, int h, uint32_t color);

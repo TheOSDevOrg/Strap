@@ -151,7 +151,7 @@ void tty::handle_scancode(scancode_t s, bool right)
         return;
     }
 
-    array<key_t> seq = array<key_t>(x);
+    array<key_t> seq = array<key_t>(x, true);
     for (int y = 0; y < x; y++) seq.at(y) = _stdin.at(y);
 
     if (!handle_sequence(seq) && k.type == keytype_t::NORMAL)
@@ -160,6 +160,8 @@ void tty::handle_scancode(scancode_t s, bool right)
         _stdin.remove_at(_stdin.size()-1);
         handle_input(kl);
     }
+
+    seq.dispose();
 }
 void tty::init()
 {
@@ -240,12 +242,13 @@ void tty::set(bool first)
 
     if (!first)
     {
-        if (current_tty->_stdin.size() != 0) this->_stdin.clone(current_tty->_stdin);
+        if (current_tty->_stdin.size() != 0) { this->_stdin.clone(current_tty->_stdin); current_tty->_stdin.clear(); }
         else this->_stdin.clear();
         current_tty->_stdout._lock = true;
         current_tty->exit();
     }
     current_tty = this;
-    current_tty->enter();
+    this->enter();
     this->_stdout._lock = false;
+    this->render();
 }
