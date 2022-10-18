@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <std/stdio.h>
 #include <core/memory.h>
 #include <std/ptr.h>
 #include <std/cstring.h>
@@ -178,12 +179,10 @@ namespace std
     public:
         ptr<T> begin()
         {
-            //if (_list == NULL) { fatal("arraylist::begin() was null"); return ptr<T>(); }
             return _list[0];
         }
         ptr<T> end()
         {
-            //if (_list == NULL) { fatal("arraylist::end() was null"); return ptr<T>(); }
             return _list[_count];
         }
     public:
