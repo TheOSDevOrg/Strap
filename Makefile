@@ -12,8 +12,8 @@ AS=i686-elf-as
 
 NAME=Strap
 
-CXXFLAGS=-fno-threadsafe-statics -Iinc -nostdlib -fno-use-cxa-atexit -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -Wno-write-strings -Wno-unused-variable -w -Wno-narrowing -Wno-sign-compare -Wno-type-limits -Wno-unused-parameter -Wno-missing-field-initializers
-CFLAGS=-fno-threadsafe-statics -Iinc -nostdlib -fno-use-cxa-atexit -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -Wno-write-strings -Wno-unused-variable -w -Wno-narrowing -Wno-sign-compare -Wno-type-limits -Wno-unused-parameter -Wno-missing-field-initializers
+CXXFLAGS=-fno-threadsafe-statics -Iinc -nostdlib -fno-use-cxa-atexit -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -Wno-write-strings -Wno-unused-variable -w -Wno-narrowing -Wno-sign-compare -Wno-type-limits -Wno-unused-parameter -Wno-missing-field-initializers -fsanitize=undefined
+CFLAGS=-fno-threadsafe-statics -Iinc -nostdlib -fno-use-cxa-atexit -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -Wno-write-strings -Wno-unused-variable -w -Wno-narrowing -Wno-sign-compare -Wno-type-limits -Wno-unused-parameter -Wno-missing-field-initializers -fsanitize=undefined
 NASMFLAGS=-felf32
 ASFLAGS=--32 -nostdlib
 

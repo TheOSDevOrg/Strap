@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <std/stdio.h>
 #include <core/memory.h>
 #include <std/ptr.h>
 #include <std/cstring.h>
@@ -202,6 +203,7 @@ namespace std
             this->_list = right._list;
             this->_limit = right._limit;
             this->_limited = right._limited;
+            return *this;
         }
     public:
         size_t size() const { return _count; }

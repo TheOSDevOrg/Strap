@@ -20,7 +20,6 @@ namespace system::core::io::layouts
         std::key_t _layout_ctrl_gr[90];
     public:
         english();
-        ~english();
     public:
         std::key_t scan(system::hal::drivers::kb::scancode_t code, std::array<std::special_t> &combination, bool right = false) override;
     };

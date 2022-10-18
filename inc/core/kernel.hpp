@@ -1,5 +1,8 @@
 #pragma once
 #include <stdint.h>
+#include <std/stdio.h>
+#include <std/ubsan.h>
+#include <std/math.h>
 #include <std/decl.h>
 #include <std/array.h>
 #include <std/ptr.h>

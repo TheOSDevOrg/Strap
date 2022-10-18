@@ -64,7 +64,7 @@ void out::clean(color fg, color bg, uint8_t x, uint8_t y, uint8_t ex, uint8_t ey
 void out::putc(char c)
 {
     if (c < ' ' || c > '~')
-        return parse_special(c);
+        { parse_special(c); return; } 
     
     int off;
     _buffer[off = get_off()].character = c;
@@ -77,7 +77,7 @@ void out::putc(char c)
 void out::putc_at(char c, uint8_t x, uint8_t y)
 {
     if (c < ' ' || c > '~')
-        return parse_special(c);
+        { parse_special(c); return; } 
     
     uint8_t ox = this->x;
     uint8_t oy = this->y;
@@ -96,7 +96,7 @@ void out::putc_at(char c, uint8_t x, uint8_t y)
 void out::putc_color(char c, color fg, color bg)
 {
     if (c < ' ' || c > '~')
-        return parse_special(c);
+        { parse_special(c); return; } 
     
     int off;
     _buffer[off = get_off()].character = c;
@@ -109,7 +109,7 @@ void out::putc_color(char c, color fg, color bg)
 void out::putc_color_at(char c, color fg, color bg, uint8_t x, uint8_t y)
 {
     if (c < ' ' || c > '~')
-        return parse_special(c);
+        { parse_special(c); return; } 
     
     uint8_t ox = this->x;
     uint8_t oy = this->y;
@@ -209,6 +209,11 @@ void out::init(uintptr_t addr, size_t maxx, size_t maxy, size_t depth, uint8_t i
 void out::dispose()
 {
     _buffer.dispose();
+}
+
+void out::format_string(char* str, const char* fmt, va_list args)
+{
+    vsprintf(str, fmt, args);
 }
 
 void out::parse_special(char c)

@@ -481,7 +481,7 @@ english::english()
         key_t { .focus = focus_t::PRESS, .type = keytype_t::SPECIAL, .data = { .special = special_t::F11} },
         key_t { .focus = focus_t::PRESS, .type = keytype_t::SPECIAL, .data = { .special = special_t::F12} },
     }
-  )
+  ), layout()
 {
 }
 

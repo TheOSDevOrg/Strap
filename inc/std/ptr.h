@@ -88,6 +88,7 @@ namespace std
             this->_org = right;
             return *this;
         }
+        
         std::ptr<T> & operator=(std::ptr<T> right)
         {
             if (e == right.e) return *this;
@@ -97,6 +98,7 @@ namespace std
             this->e = right.e;
             this->_org = right._org;
             this->_keep = right._keep;
+            return *this;
         }
         std::ptr<T> & operator=(alloc_ptr<T> right)
         {
@@ -105,6 +107,7 @@ namespace std
             this->e = right._ptr;
             this->_org = right._ptr;
             this->_keep = false;
+            return *this;
         }
         bool operator==(T *right)
         {
