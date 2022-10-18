@@ -96,6 +96,7 @@ namespace std
             this->_list = right._list;
             this->_size = right._size;
             this->_stay = right._stay;
+            return *this;
         }
         bool operator==(array<T> &right)
         {

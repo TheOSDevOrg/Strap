@@ -11,9 +11,8 @@ namespace system::core::io
     class layout
     {
     public:
-        inline layout() {}
-        inline ~layout() {}
+        layout() { }
     public:
-        virtual std::key_t scan(system::hal::drivers::kb::scancode_t code, std::array<std::special_t> &combination, bool right = false);
+        virtual std::key_t scan(system::hal::drivers::kb::scancode_t code, std::array<std::special_t> &combination, bool right = false) { }
     };
 }

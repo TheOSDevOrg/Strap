@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdarg.h>
 #include <std/decl.h>
 #include <std/string.h>
 #include <std/array.h>
@@ -92,6 +93,7 @@ namespace system::core::io
             return ix+(iy*MAXX);
         }
     public:
+        void format_string(char* str, const char* fmt, va_list args);
         void parse_special(char c);
         void new_line();
         void backspace();

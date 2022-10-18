@@ -178,10 +178,12 @@ namespace std
     public:
         ptr<T> begin()
         {
+            //if (_list == NULL) { fatal("arraylist::begin() was null"); return ptr<T>(); }
             return _list[0];
         }
         ptr<T> end()
         {
+            //if (_list == NULL) { fatal("arraylist::end() was null"); return ptr<T>(); }
             return _list[_count];
         }
     public:
@@ -202,6 +204,7 @@ namespace std
             this->_list = right._list;
             this->_limit = right._limit;
             this->_limited = right._limited;
+            return *this;
         }
     public:
         size_t size() const { return _count; }
